@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal Page</title>
+<style>
+body {
+  margin:0; padding:0;
+  overflow:hidden;
+  font-family:'Comic Sans MS', cursive, sans-serif;
+  background:#fff0f5;
+}
+.modal, .popup {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  display:flex; justify-content:center; align-items:center;
+  z-index:10;
+}
+.modal-content, .popup-content {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+button {
+  background:#ffc0cb;
+  border:none;
+  padding:10px 20px;
+  margin:10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
+}
+.bouquet {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-top:50px;
+  flex-wrap:wrap;
+  z-index:1;
+  flex-direction:column;
+}
+.guide { font-size:18px; margin-top:20px; color:#ff69b4; }
+.flower { width:80px; height:80px; cursor:pointer; }
+.garden-flower { position:absolute; width:50px; height:50px; pointer-events:none; opacity:0; animation:floatUp 5s linear forwards; }
+@keyframes floatUp {
+  from { transform:translateY(100vh) rotate(0deg); opacity:1; }
+  to { transform:translateY(-10vh) rotate(360deg); opacity:0; }
+}
+.center-bloom { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); width:250px; height:250px; z-index:20; animation:bloom 3s ease forwards; }
+@keyframes bloom {
+  from { transform:translate(-50%,-50%) scale(0);}
+  to { transform:translate(-50%,-50%) scale(1);}
+}
+.sakura, .emoji { position:fixed; top:-10vh; width:25px; height:25px; opacity:0.9; pointer-events:none; z-index:5; animation:fall linear infinite; }
+@keyframes fall {
+  from { transform:translateY(-10vh) translateX(0) rotate(0deg);}
+  to { transform:translateY(110vh) translateX(100px) rotate(360deg);}
+}
+.blurred { filter:blur(8px);}
+</style>
+</head>
+<body>
+
+<div class="modal" id="startModal">
+  <div class="modal-content">
+    <h2>🌸 Wanna see something? 🌹</h2>
+    <button onclick="startExperience(true)">Ya sure 💕</button>
+    <button onclick="startExperience(false)">Nah 🙈</button>
+  </div>
+</div>
+
+<div class="bouquet" id="bouquet" style="display:none">
+  <div class="guide">Click on the flower 🌸</div>
+  <div class="flower"><img src="Bouquet.png" alt="Bouquet" style="width:100%;height:100%;border-radius:50%;"></div>
+  <div class="flower"><img src="Bouquet.png" alt="Bouquet" style="width:100%;height:100%;border-radius:50%;"></div>
+  <div class="flower"><img src="Bouquet.png" alt="Bouquet" style="width:100%;height:100%;border-radius:50%;"></div>
+  <div class="flower"><img src="Bouquet.png" alt="Bouquet" style="width:100%;height:100%;border-radius:50%;"></div>
+  <div class="flower"><img src="Bouquet.png" alt="Bouquet" style="width:100%;height:100%;border-radius:50%;"></div>
+</div>
+
+<div class="popup" id="lovePopup" style="display:none">
+  <div class="popup-content">
+    <h2>💖 I love you! 💖</h2>
+    <button onclick="finalStep()">Yes, me too 😍</button>
+  </div>
+</div>
+
+<audio id="song" src="Dil_Song.mp3" loop></audio>
+
+<script>
+function startExperience(choice){
+  if(!choice){ alert("Think again 😉"); return;}
+  document.getElementById('startModal').style.display='none';
+  document.getElementById('bouquet').style.display='flex';
+}
+
+const flowers=document.querySelectorAll('.flower');
+flowers.forEach(flower=>{
+  flower.addEventListener('click',()=>{
+    spawnGarden(200);
+    document.getElementById('lovePopup').style.display='flex';
+  });
+});
+
+function spawnGarden(count){
+  for(let i=0;i<count;i++){
+    const f=document.createElement('div');
+    f.classList.add('garden-flower');
+    f.style.left=Math.random()*100+'vw';
+    f.style.top=Math.random()*100+'vh';
+    f.innerHTML='<img src="back.png" alt="Flower" style="width:100%;height:100%;border-radius:50%;">';
+    f.style.animationDuration=(3+Math.random()*5)+'s';
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),8000);
+  }
+}
+
+function finalStep(){
+  document.getElementById('lovePopup').style.display='none';
+
+  document.getElementById('bouquet').classList.add('blurred');
+
+  // Create and show the blooming RedRose in the center
+  const bloom = document.createElement('div');
+  bloom.classList.add('center-bloom');
+  bloom.innerHTML = '<img src="RedRose.png" alt="Rose" style="width:100%;height:100%;border-radius:50%;">';
+  document.body.appendChild(bloom);
+
+  // Start the song
+  const audio = document.getElementById('song');
+  audio.play();
+
+  // Sakura petals and emojis
+  setInterval(()=>{
+    const element=document.createElement('div');
+    if(Math.random()<0.5){
+      element.classList.add('sakura');
+      element.innerHTML='<img src="Sakura.png" alt="Sakura" style="width:100%;height:100%;border-radius:50%;">';
+    }else{
+      element.classList.add('emoji');
+      const emojis=["🌸","💖","✨","💕","😍","🌹"];
+      element.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      element.style.fontSize="20px";
+    }
+    element.style.left=Math.random()*100+'vw';
+    element.style.animationDuration=(5+Math.random()*5)+'s';
+    document.body.appendChild(element);
+    setTimeout(()=>element.remove(),12000);
+  },300);
+
+  // Show the popup after the bloom animation (3s)
+  setTimeout(()=> alert("Love you too darling 💕🌸✨"), 3000);
+}
+
+</script>
+</body>
+</html>
